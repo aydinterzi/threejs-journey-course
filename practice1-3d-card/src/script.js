@@ -30,7 +30,7 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   1000
 );
-camera.position.set(0, 0, 5);
+camera.position.set(0, 0, 8);
 
 scene.add(camera);
 
@@ -41,39 +41,89 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
 
-const cardGeometry = new THREE.PlaneGeometry(3, 2);
+const cardGeometry = new THREE.PlaneGeometry(6, 3);
 const cardMaterial = new THREE.MeshStandardMaterial({
-  color: 0x0077ff,
+  color: 0xf4f4f4,
   side: THREE.DoubleSide,
 });
 const card = new THREE.Mesh(cardGeometry, cardMaterial);
 scene.add(card);
 
 fontloader.load("/fonts/helvetiker_regular.typeface.json", (font) => {
-  const textGeometry = new TextGeometry("Aydin Terzi", {
+  const nameGeometry = new TextGeometry("Aydin Terzi", {
+    font: font,
+    size: 0.3,
+    depth: 0.05,
+  });
+  const nameMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 });
+  const nameText = new THREE.Mesh(nameGeometry, nameMaterial);
+  nameGeometry.center();
+  nameText.position.set(0, 1.2, 0.03); // Üst-orta
+  card.add(nameText);
+
+  // Meslek
+  const jobGeometry = new TextGeometry("Frontend Developer", {
     font: font,
     size: 0.2,
     depth: 0.05,
-    bevelEnabled: true,
-    bevelThickness: 0.01,
-    bevelSize: 0.01,
   });
+  const jobMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
+  const jobText = new THREE.Mesh(jobGeometry, jobMaterial);
+  jobGeometry.center();
+  jobText.position.set(0, 0.8, 0.03); // İsim altında
+  card.add(jobText);
 
-  const textMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
-  const text = new THREE.Mesh(textGeometry, textMaterial);
-  textGeometry.center();
-  text.position.set(0, 0, 0.05);
-  scene.add(text);
+  const marginLeft = -2.8;
+  // Mail Adresi
+  const mailGeometry = new TextGeometry("Mail: aydinterzi7@gmail.com", {
+    font: font,
+    size: 0.15,
+    depth: 0.05,
+  });
+  const mailMaterial = new THREE.MeshStandardMaterial({ color: 0x555555 });
+  const mailText = new THREE.Mesh(mailGeometry, mailMaterial);
+  mailText.position.set(marginLeft, -0.5, 0.03); // Sol-alt
+  card.add(mailText);
+
+  // GitHub Adresi
+  const githubGeometry = new TextGeometry("GitHub: github.com/aydinterzi", {
+    font: font,
+    size: 0.15,
+    depth: 0.05,
+  });
+  const githubMaterial = new THREE.MeshStandardMaterial({ color: 0x555555 });
+  const githubText = new THREE.Mesh(githubGeometry, githubMaterial);
+  githubText.position.set(marginLeft, -0.8, 0.03); // Sol-alt
+  card.add(githubText);
+
+  // Medium Adresi
+  const mediumGeometry = new TextGeometry(
+    "Medium: https://medium.com/@aydinterzi7",
+    {
+      font: font,
+      size: 0.15,
+      depth: 0.05,
+    }
+  );
+  const mediumMaterial = new THREE.MeshStandardMaterial({ color: 0x555555 });
+  const mediumText = new THREE.Mesh(mediumGeometry, mediumMaterial);
+  mediumText.position.set(marginLeft, -1.1, 0.03); // Sol-alt
+  card.add(mediumText);
+  // İş Yeri
+  const companyGeometry = new TextGeometry("OBSS", {
+    font: font,
+    size: 0.15,
+    depth: 0.05,
+  });
+  const companyMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
+  const companyText = new THREE.Mesh(companyGeometry, companyMaterial);
+  companyGeometry.center();
+  companyText.position.set(2.4, -1.05, 0.03); // Sağ-alt
+  card.add(companyText);
 });
 
-// const axesHelper = new THREE.AxesHelper();
-// scene.add(axesHelper);
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); // Ortam ışığı
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight);
-
-const pointLight = new THREE.PointLight(0xffffff, 1);
-pointLight.position.set(2, 2, 2); // Işığı yukarıdan ekle
-scene.add(pointLight);
 
 const clock = new THREE.Clock();
 
