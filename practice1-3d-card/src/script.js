@@ -7,6 +7,12 @@ const canvas = document.querySelector("canvas.webgl");
 
 const scene = new THREE.Scene();
 const fontloader = new FontLoader();
+const textureLoader = new THREE.TextureLoader();
+
+const cardTexture = textureLoader.load(
+  "/textures/fabric_leather_01_diff_4k.jpg"
+);
+cardTexture.colorSpace = THREE.SRGBColorSpace;
 
 const sizes = {
   width: window.innerWidth,
@@ -43,7 +49,7 @@ controls.enableDamping = true;
 
 const cardGeometry = new THREE.PlaneGeometry(6, 3);
 const cardMaterial = new THREE.MeshStandardMaterial({
-  color: 0xf4f4f4,
+  map: cardTexture,
   side: THREE.DoubleSide,
 });
 const card = new THREE.Mesh(cardGeometry, cardMaterial);
