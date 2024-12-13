@@ -83,10 +83,17 @@ const character = new THREE.Mesh(
 character.position.y += character.geometry.parameters.height / 2;
 scene.add(character);
 
+const updateCamera = () => {
+  camera.position.x = character.position.x;
+  camera.position.z = character.position.z + 8;
+  camera.lookAt(character.position);
+};
+
 const tick = () => {
   const delta = clock.getDelta();
   handleMovement(delta);
   controls.update();
+  updateCamera();
   renderer.render(scene, camera);
   window.requestAnimationFrame(tick);
 };
