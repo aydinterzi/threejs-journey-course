@@ -41,6 +41,34 @@ window.addEventListener("resize", () => {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 });
 
+const keys = {};
+
+window.addEventListener("keydown", (event) => {
+  keys[event.key] = true;
+});
+
+window.addEventListener("keyup", (event) => {
+  keys[event.key] = false;
+});
+
+let clock = new THREE.Clock();
+
+const handleMovement = (delta) => {
+  const speed = 5;
+  if (keys["ArrowUp"]) {
+    character.position.z -= speed * delta;
+  }
+  if (keys["ArrowDown"]) {
+    character.position.z += speed * delta;
+  }
+  if (keys["ArrowLeft"]) {
+    character.position.x -= speed * delta;
+  }
+  if (keys["ArrowRight"]) {
+    character.position.x += speed * delta;
+  }
+};
+
 const ground = new THREE.Mesh(
   new THREE.PlaneGeometry(10, 10),
   new THREE.MeshBasicMaterial({ color: "red" })
@@ -56,8 +84,10 @@ character.position.y += character.geometry.parameters.height / 2;
 scene.add(character);
 
 const tick = () => {
-  renderer.render(scene, camera);
+  const delta = clock.getDelta();
+  handleMovement(delta);
   controls.update();
+  renderer.render(scene, camera);
   window.requestAnimationFrame(tick);
 };
 
