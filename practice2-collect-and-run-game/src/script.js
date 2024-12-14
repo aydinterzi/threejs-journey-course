@@ -17,7 +17,7 @@ const camera = new THREE.PerspectiveCamera(
   10000
 );
 camera.position.z = 5;
-camera.position.y = 2;
+camera.position.y = 5;
 
 scene.add(camera);
 
@@ -26,6 +26,8 @@ controls.enableDamping = true;
 
 const renderer = new THREE.WebGLRenderer({ canvas: canvas });
 renderer.setSize(sizes.width, sizes.height);
+
+const raycaster = new THREE.Raycaster();
 
 window.addEventListener("resize", () => {
   // Update sizes
@@ -39,6 +41,13 @@ window.addEventListener("resize", () => {
   // Update renderer
   renderer.setSize(sizes.width, sizes.height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+});
+
+const mouse = new THREE.Vector2();
+
+window.addEventListener("mousemove", (event) => {
+  mouse.x = (event.clientX / sizes.width) * 2 - 1;
+  mouse.y = -(event.clientY / sizes.height) * 2 + 1;
 });
 
 const keys = {};
@@ -89,9 +98,57 @@ const updateCamera = () => {
   camera.lookAt(character.position);
 };
 
+const randomObjects = [];
+
+const placeRandomObjects = (count) => {
+  for (let i = 0; i < count; i++) {
+    const randomPosition = new THREE.Vector3(
+      (Math.random() - 0.5) * ground.geometry.parameters.width,
+      0.5,
+      (Math.random() - 0.5) * ground.geometry.parameters.height
+    );
+
+    const objectMesh = new THREE.Mesh(
+      new THREE.BoxGeometry(1, 1, 1),
+      new THREE.MeshBasicMaterial({ color: "white" })
+    );
+
+    objectMesh.position.copy(randomPosition);
+    randomObjects.push(objectMesh);
+    scene.add(objectMesh);
+  }
+};
+
+placeRandomObjects(10);
+
+const collectObjects = () => {
+  randomObjects.forEach((object, index) => {
+    const distance = character.position.distanceTo(object.position);
+    if (distance < 1) {
+      createParticleEffect(object.position);
+      scene.remove(object);
+      randomObjects.splice(index, 1);
+    }
+  });
+};
+
+const createParticleEffect = (position) => {
+  const particleGeometry = new THREE.SphereGeometry(0.1, 8, 8);
+  const particleMaterial = new THREE.MeshBasicMaterial({ color: "yellow" });
+  const particle = new THREE.Mesh(particleGeometry, particleMaterial);
+
+  particle.position.copy(position);
+  scene.add(particle);
+
+  setTimeout(() => {
+    scene.remove(particle);
+  }, 500);
+};
+
 const tick = () => {
   const delta = clock.getDelta();
   handleMovement(delta);
+  collectObjects();
   controls.update();
   updateCamera();
   renderer.render(scene, camera);
